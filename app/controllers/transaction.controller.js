@@ -4,8 +4,10 @@ const Registration = db.registration;
 const Payment = db.payment;
 const Op = db.Sequelize.Op;
 const request = require('request');
+var getIP = require('ipware')().get_ip;
 
 exports.transaction = async (req, res) => {
+    var ipInfo = getIP(req);
     var response = new Array();
     var responseTemp = new Array();
     var dataRegistration = new Array();
@@ -40,7 +42,7 @@ exports.transaction = async (req, res) => {
             dataRegistration[i]["orderType"] = reg[i].orderType;
             dataRegistration[i]["dateReservation"] = reg[i].dateReservation;
             dataRegistration[i]["hourReservation"] = reg[i].hourReservation;
-            dataRegistration[i]["created_by"] = reg[i].email;
+            dataRegistration[i]["created_by"] = JSON.stringify(ipInfo);
             clientId = reg[i].clientId;
             totalPrice += reg[i].price;
         }
@@ -59,9 +61,11 @@ exports.transaction = async (req, res) => {
                             expiredTime: resSpeedpay.payment.expired,
                             channel: pay.channel,
                             status: "pending",
-                            jsonRequest: JSON.stringify(pay)
+                            jsonRequest: JSON.stringify(pay),
+                            created_by: JSON.stringify(ipInfo)
                         }
                         var resPayment = await createPayment(dataToPayment);
+                        console.log(resPayment)
                         responseTemp = {
                             status: true,
                             message: "Successfully",
@@ -147,7 +151,7 @@ async function postSpeedpay(req, invoiceNumber, totalPrice, responseRegistration
         customer_email: pay.customer_email,
         customer_name: pay.customer_name,
         customer_phone: pay.customer_phone,
-        expired: 120, //DALAM SATUAN MENIT 
+        expired: 2, //DALAM SATUAN JAM 
     }
     for (i = 0; i < reg.length; i++) {
         orderType = reg[i].orderType.toUpperCase();
@@ -225,6 +229,10 @@ function createInvoice() {
     let hours = date_ob.getHours();
     let minutes = date_ob.getMinutes();
     let seconds = date_ob.getSeconds();
+    month = month.toString().length == 2 ? month : "0" + month;
+    date = date.toString().length == 2 ? date : "0" + date;
+    minutes = minutes.toString().length == 2 ? minutes : "0" + minutes;
+    seconds = seconds.toString().length == 2 ? seconds : "0" + seconds;
 
     var strFront = "PRMDX";
     var dateNow = year + "" + month + "" + date;

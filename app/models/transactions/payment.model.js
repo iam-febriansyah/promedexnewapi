@@ -42,7 +42,7 @@ module.exports = (sequelize, Sequelize) => {
         },
         jsonResponse: {
             type: Sequelize.TEXT,
-            allowNull: null
+            allowNull: true
         },
         created_at: {
             type: 'TIMESTAMP',
