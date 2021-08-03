@@ -13,7 +13,16 @@ module.exports = function (app) {
 
     app.post(
         "/api/transaction",
-        [authJwt.verifyToken],
+        [authJwt.verifyTokenUser],
         route.transaction
     );
+
+    app.post(
+        "/api/statusHomecare",
+        [authJwt.verifyTokenUser],
+        route.statusHomecare
+    );
+
+    app.post("/api/callback/speedpay",
+        route.callbackSpeedpay);
 };

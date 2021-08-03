@@ -1,3 +1,4 @@
 module.exports = {
-    secret: "promedex-api-key"
+    secretUser: "promedex-api-key-user",
+    secretSwabber: "promedex-api-key-swabber"
 };

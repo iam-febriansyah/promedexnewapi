@@ -13,7 +13,7 @@ module.exports = function (app) {
 
     app.get(
         "/api/merchants",
-        [authJwt.verifyToken],
+        [authJwt.verifyTokenUser],
         route.findAll
     );
 };

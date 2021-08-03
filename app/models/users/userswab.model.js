@@ -1,16 +1,22 @@
 module.exports = (sequelize, Sequelize) => {
-    const User = sequelize.define("users", {
-        username: {
-            type: Sequelize.STRING
+    const UserSwab = sequelize.define("userswab", {
+        clientId: {
+            type: Sequelize.INTEGER,
+            allowNull: false
         },
-        email: {
-            type: Sequelize.STRING
+        iduser: {
+            type: Sequelize.INTEGER,
+            allowNull: false
         },
-        password: {
-            type: Sequelize.STRING
+        onSwab: {
+            type: Sequelize.BOOLEAN,
+            allowNull: false,
+            defaultValue: false,
         },
-        level: {
-            type: Sequelize.INTEGER
+        online: {
+            type: Sequelize.BOOLEAN,
+            allowNull: false,
+            defaultValue: true,
         },
         created_at: {
             type: 'TIMESTAMP',
@@ -33,5 +39,5 @@ module.exports = (sequelize, Sequelize) => {
         timestamps: false
     });
 
-    return User;
+    return UserSwab;
 };

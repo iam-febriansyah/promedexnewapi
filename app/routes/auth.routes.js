@@ -1,5 +1,8 @@
 const { verifySignUp } = require("../middleware");
-const controller = require("../controllers/auth.controller.js");
+const userAuth = require("../controllers/auths/authuser.controller.js");
+const fcm = require("../controllers/auths/fcm.controller.js");
+const swabberAuth = require("../controllers/auths/authswabber.controller.js");
+const { authJwt } = require("../middleware");
 
 module.exports = function (app) {
     app.use(function (req, res, next) {
@@ -9,18 +12,29 @@ module.exports = function (app) {
         );
         next();
     });
-    app.get("/api/auth/all", function (req, res) {
-        console.log("Request handler 'insertUser' was called.");
-    });
 
     app.post(
         "/api/auth/signup",
         [
-            verifySignUp.checkDuplicateUsernameOrEmail,
-            // verifySignUp.checkRolesExisted
+            verifySignUp.checkDuplicateUsernameOrEmailUser,
         ],
-        controller.signup
+        userAuth.signup
+    );
+    app.post(
+        "/api/swabber/signup",
+        [
+            verifySignUp.checkDuplicateUsernameOrEmailSwabber,
+        ],
+        swabberAuth.signup
     );
 
-    app.post("/api/auth/signin", controller.signin);
+    app.post("/api/auth/signin", userAuth.signin);
+    app.post("/api/swabber/signin", swabberAuth.signin);
+
+    app.post("/api/updateTokenFcm",
+        [authJwt.verifyTokenUser],
+        fcm.updateTokenFCM);
+    app.post("/api/swabber/updateTokenFcm",
+        [authJwt.verifyTokenSwabber],
+        fcm.updateTokenFCM);
 };

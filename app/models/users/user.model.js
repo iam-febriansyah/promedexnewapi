@@ -1,28 +1,24 @@
 module.exports = (sequelize, Sequelize) => {
-    const ClientService = sequelize.define("clientservice", {
-        clientId: {
-            type: Sequelize.INTEGER,
-            allowNull: false
+    const User = sequelize.define("users", {
+        username: {
+            type: Sequelize.STRING
         },
-        serviceId: {
-            type: Sequelize.INTEGER,
-            allowNull: false
+        email: {
+            type: Sequelize.STRING
         },
-        price: {
-            type: Sequelize.DOUBLE,
-            allowNull: false
+        password: {
+            type: Sequelize.STRING
         },
-        desc: {
-            type: Sequelize.STRING,
+        level: {
+            type: Sequelize.INTEGER
+        },
+        fcm_token: {
+            type: Sequelize.TEXT
+        },
+        fcm_last_update: {
+            type: 'TIMESTAMP',
+            defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
             allowNull: true
-        },
-        strImage1: {
-            type: Sequelize.STRING,
-            allowNull: false
-        },
-        isActive: {
-            type: Sequelize.BOOLEAN,
-            defaultValue: true,
         },
         created_at: {
             type: 'TIMESTAMP',
@@ -45,5 +41,5 @@ module.exports = (sequelize, Sequelize) => {
         timestamps: false
     });
 
-    return ClientService;
+    return User;
 };

@@ -13,7 +13,13 @@ module.exports = function (app) {
 
     app.get(
         "/api/menus",
-        [authJwt.verifyToken],
+        [authJwt.verifyTokenUser],
         route.findAll
+    );
+
+    app.post(
+        "/api/getListSwabbers",
+        [authJwt.verifyTokenUser],
+        route.getListSwabbers
     );
 };

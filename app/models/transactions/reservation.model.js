@@ -1,38 +1,26 @@
 module.exports = (sequelize, Sequelize) => {
-    const Registration = sequelize.define("registration", {
-        clientId: {
-            type: Sequelize.INTEGER,
-            allowNull: false
-        },
+    const Reservation = sequelize.define("reservation", {
         invoiceNumber: {
             type: Sequelize.STRING,
             allowNull: false
         },
-        identityNumber: {
+        customerName: {
             type: Sequelize.STRING,
             allowNull: false
         },
-        identityParentNumber: {
-            type: Sequelize.STRING,
-            allowNull: true
-        },
-        name: {
+        customerEmail: {
             type: Sequelize.STRING,
             allowNull: false
         },
-        gender: {
+        customerPhone: {
             type: Sequelize.STRING,
             allowNull: false
         },
-        birthDay: {
-            type: Sequelize.DATE,
+        price: {
+            type: Sequelize.DOUBLE,
             allowNull: false
         },
-        birthPlace: {
-            type: Sequelize.STRING,
-            allowNull: false
-        },
-        nationality: {
+        bank: {
             type: Sequelize.STRING,
             allowNull: false
         },
@@ -40,36 +28,33 @@ module.exports = (sequelize, Sequelize) => {
             type: Sequelize.TEXT,
             allowNull: false
         },
-        phone: {
+        latitude: {
             type: Sequelize.STRING,
             allowNull: false
         },
-        email: {
+        longitude: {
             type: Sequelize.STRING,
             allowNull: false
         },
-        serviceClientId: {
+        status: {
             type: Sequelize.INTEGER,
-            allowNull: false
+            allowNull: false,
+            defaultValue: 0
         },
-        price: {
-            type: Sequelize.DOUBLE,
-            allowNull: false
-        },
-        orderType: {
+        reservationType: {
             type: Sequelize.STRING,
             allowNull: false
         },
-        dateReservation: {
-            type: Sequelize.DATEONLY,
-            allowNull: false
-        },
-        hourReservation: {
-            type: Sequelize.STRING,
-            allowNull: false
+        idSwabber: {
+            type: Sequelize.INTEGER,
+            allowNull: true
         },
         iduser: {
             type: Sequelize.INTEGER,
+            allowNull: true
+        },
+        remarks: {
+            type: Sequelize.TEXT,
             allowNull: true
         },
         created_at: {
@@ -93,5 +78,5 @@ module.exports = (sequelize, Sequelize) => {
         timestamps: false
     });
 
-    return Registration;
+    return Reservation;
 };

@@ -13,7 +13,7 @@ const ServiceTag = db.servicetag;
 const Op = db.Sequelize.Op;
 
 exports.findAll = async (req, res) => {
-    var idUser = req.userIdByToken;
+    var idUser = req.sessionIdUser;
     var response = new Array();
     var arrClient = new Array();
     var arrVisiHour = new Array();
@@ -21,7 +21,6 @@ exports.findAll = async (req, res) => {
     var arrChannel = new Array();
     var arrOrderType = new Array();
     var arrService = new Array();
-    var arrServiceTag = new Array();
     var resMerchant = await getMerchant();
     if (typeof resMerchant.status !== 'undefined') {
         if (resMerchant.status) {
@@ -50,23 +49,21 @@ exports.findAll = async (req, res) => {
 
                 for (m = 0; m < dataClientservices.length; m++) {
                     arrService[m] = {};
+                    var arrServiceTag = [];
                     var serviceTag = dataClientservices[m].service.servicetags;
-
                     for (n = 0; n < serviceTag.length; n++) {
                         arrServiceTag[n] = {};
                         arrServiceTag[n] = serviceTag[n].menu.tag;
                     }
                     splitTag = arrServiceTag.join("|");
-
-
                     arrService[m]["serviceClientId"] = dataClientservices[m].id;
                     arrService[m]["itemID"] = dataClientservices[m].service.itemID;
                     arrService[m]["itemName"] = dataClientservices[m].service.itemName;
                     arrService[m]["metode"] = dataClientservices[m].service.metode;
                     arrService[m]["price"] = dataClientservices[m].price;
                     arrService[m]["tag"] = splitTag;
-                    arrService[m]["desc"] = dataClientservices[m].service.desc;
-                    arrService[m]["strImage1"] = dataClientservices[m].service.strImage1;
+                    arrService[m]["desc"] = dataClientservices[m].desc;
+                    arrService[m]["strImage1"] = dataClientservices[m].strImage1;
                     arrService[m]["homecareMin"] = dataClientservices[m].service.homecareMin;
                     arrService[m]["homecareMax"] = dataClientservices[m].service.homecareMax;
                 }
@@ -154,7 +151,7 @@ async function getMerchant() {
                     required: true,
                     include: [{
                         model: ServiceTag,
-                        required: false,
+                        required: true,
                         include: [{
                             model: Menu,
                             required: true
