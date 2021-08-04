@@ -35,6 +35,7 @@ require("./app/routes/auth.routes")(app);
 require("./app/routes/merchant.routes")(app);
 require("./app/routes/transaction.routes")(app);
 require("./app/routes/swabber.routes")(app);
+require("./app/routes/history.routes")(app);
 
 // set port, listen for requests
 const PORT = process.env.PORT || 8080;

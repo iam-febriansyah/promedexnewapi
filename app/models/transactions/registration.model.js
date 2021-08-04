@@ -4,6 +4,10 @@ module.exports = (sequelize, Sequelize) => {
             type: Sequelize.INTEGER,
             allowNull: false
         },
+        iduser: {
+            type: Sequelize.INTEGER,
+            allowNull: false
+        },
         invoiceNumber: {
             type: Sequelize.STRING,
             allowNull: false
@@ -70,6 +74,10 @@ module.exports = (sequelize, Sequelize) => {
         },
         iduser: {
             type: Sequelize.INTEGER,
+            allowNull: true
+        },
+        status: {
+            type: Sequelize.STRING,
             allowNull: true
         },
         created_at: {

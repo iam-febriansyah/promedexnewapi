@@ -44,7 +44,16 @@ exports.transaction = async (req, res) => {
             dataRegistration[i]["email"] = reg[i].email;
             dataRegistration[i]["serviceClientId"] = reg[i].serviceClientId;
             dataRegistration[i]["price"] = reg[i].price;
-            dataRegistration[i]["orderType"] = reg[i].orderType;
+            var type = reg[i].orderType;
+            if (reg[i].orderType == 'drivethru') {
+                type = "walkin"
+            }
+            var status = "Pending payment";
+            if (pay.type == "homecare") {
+                status = "Waiting swabber confirmation";
+            }
+            dataRegistration[i]["orderType"] = type;
+            dataRegistration[i]["status"] = status;
             dataRegistration[i]["dateReservation"] = reg[i].dateReservation;
             dataRegistration[i]["hourReservation"] = reg[i].hourReservation;
             dataRegistration[i]["created_by"] = JSON.stringify(ipInfo);
@@ -263,16 +272,19 @@ exports.callbackSpeedpay = async (req, res) => {
 
         if (status == 'SUCCESS') {
             status = 5;
+            statusReg = "Payment confirm";
             statusPayment = "settelment";
             remarks = "Payment success";
             remarksFcm = "Berhasil dikonfirmasi";
         } else if (status == 'EXPIRE') {
             status = 4;
+            statusReg = "Payment expire";
             statusPayment = "cancel";
             remarks = "Dibatalkan";
             remarksFcm = "Dibatalkan";
         } else {
             status = 2;
+            statusReg = "Payment pending";
             statusPayment = "pending";
             remarks = "Pending Payment";
             remarksFcm = "dibuat silakan membayar sesuai batas yang telah ditentukan";
@@ -287,7 +299,6 @@ exports.callbackSpeedpay = async (req, res) => {
         const updateReservation = await Reservation.update(dataReservation, {
             where: { invoiceNumber: invoiceNumber }
         });
-
         let dataPayment = {
             status: statusPayment,
             remarks: remarks,
@@ -296,12 +307,19 @@ exports.callbackSpeedpay = async (req, res) => {
             updated_at: dateNow,
             updated_by: "Speedpay system"
         }
-        const updateRegistraion = await Payment.update(dataPayment, {
+        let dataReg = {
+            status: statusReg
+        }
+        const updatePayment = await Payment.update(dataPayment, {
+            where: { invoiceNumber: invoiceNumber }
+        });
+        const updateRegistration = await Registraion.update(dataReg, {
             where: { invoiceNumber: invoiceNumber }
         });
         response = {
-            updateReservation: updateReservation,
-            updateRegistraion: updateRegistraion,
+            updatePayment: updatePayment,
+            updateRegistration: updateRegistration,
+            updateReservation: updateReservation
         }
         await postFcmPayment(invoiceNumber, remarksFcm);
         res.status(200).send(response);

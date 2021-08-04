@@ -108,5 +108,13 @@ db.registration.hasOne(db.user, {
     sourceKey: 'iduser',
     foreignKey: 'id'
 });
+db.payment.hasMany(db.registration, {
+    sourceKey: 'invoiceNumber',
+    foreignKey: 'invoiceNumber'
+});
+db.registration.hasOne(db.clientservice, {
+    sourceKey: 'serviceClientId',
+    foreignKey: 'id'
+});
 
 module.exports = db;

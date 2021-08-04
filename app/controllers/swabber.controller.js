@@ -113,6 +113,15 @@ exports.confirmation = async (req, res) => {
                             invoiceNumber: invoiceNumber
                         }
                     });
+
+                    valuesReg = {
+                        status: "Pending payment"
+                    }
+                    const resultReg = await Registration.update(values, {
+                        where: {
+                            invoiceNumber: invoiceNumber
+                        }
+                    });
                     if (result) {
                         if (confirmation) {
                             var transaction_details = new Array();
@@ -147,6 +156,7 @@ exports.confirmation = async (req, res) => {
                                     transaction_details[i]["serviceClientId"] = reg[i].serviceClientId;
                                     transaction_details[i]["price"] = reg[i].price;
                                     transaction_details[i]["orderType"] = reg[i].orderType;
+                                    transaction_details[i]["status"] = reg[i].status;
                                     transaction_details[i]["dateReservation"] = reg[i].dateReservation;
                                     transaction_details[i]["hourReservation"] = reg[i].hourReservation;
                                     transaction_details[i]["created_by"] = JSON.stringify(ipInfo);
