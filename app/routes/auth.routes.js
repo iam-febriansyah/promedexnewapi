@@ -29,6 +29,9 @@ module.exports = function (app) {
     );
 
     app.post("/api/auth/signin", userAuth.signin);
+    app.post("/api/otp", userAuth.otp);
+    app.post("/api/otpConfirmation", userAuth.otpConfirmation);
+
     app.post("/api/swabber/signin", swabberAuth.signin);
 
     app.post("/api/updateTokenFcm",

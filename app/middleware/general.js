@@ -1,7 +1,11 @@
 "use strict";
 
 const db = require("../models");
-const config = require("../config/auth.config");
+const { generalFunction } = require("../middleware");
+const {
+    v1: uuidv1,
+    v4: uuidv4,
+} = require('uuid');
 const User = db.user;
 const UserDetail = db.userdetail;
 
@@ -100,6 +104,40 @@ module.exports.getSessionUser = async function getSessionUser(idUser) {
         message: resUser.message,
         accessToken: resUser.statusCode == 200 ? resUser.accessToken : null,
         dataUser: dataUsers
+    }
+    return response;
+}
+
+module.exports.generateOtp = function generateOtp() {
+    return generateOtp();
+}
+
+function generateOtp() {
+    return Math.floor(100000 + Math.random() * 900000);
+}
+
+module.exports.setTimeOTP = async function setTimeOTP(id) {
+    console.log("WAITING .... " + id);
+    return setTimeout(async function () {
+        console.log("TIME OUT OTP : " + id);
+        await updateOtp(false, id);
+    }, 60 * 1000);
+}
+
+module.exports.updateOtp = async function updateOtp(isSend, id) {
+    var otpCode = isSend ? generateOtp() : uuidv4();
+    var valuesReg = {
+        otpcode: otpCode
+    }
+    const result = await User.update(valuesReg, {
+        where: {
+            id: id
+        }
+    });
+    if (!result) {
+        var response = { status: false, otpcode: null }
+    } else {
+        var response = { status: true, otpcode: otpCode }
     }
     return response;
 }

@@ -6,7 +6,7 @@ module.exports = (sequelize, Sequelize) => {
         },
         identityNumber: {
             type: Sequelize.STRING,
-            allowNull: false
+            allowNull: true
         },
         identityParentNumber: {
             type: Sequelize.STRING,
@@ -14,31 +14,30 @@ module.exports = (sequelize, Sequelize) => {
         },
         name: {
             type: Sequelize.STRING,
-            allowNull: false
+            allowNull: true
         },
         gender: {
             type: Sequelize.STRING,
-            allowNull: false
+            allowNull: true
         },
         birthDay: {
             type: Sequelize.DATE,
-            allowNull: false
+            allowNull: true
         },
         birthPlace: {
             type: Sequelize.STRING,
-            allowNull: false
+            allowNull: true
         },
         nationality: {
             type: Sequelize.STRING,
-            allowNull: false
+            allowNull: true
         },
         address: {
             type: Sequelize.TEXT,
-            allowNull: false
+            allowNull: true
         },
         phone: {
-            type: Sequelize.STRING,
-            allowNull: false
+            type: Sequelize.INTEGER
         },
         created_at: {
             type: 'TIMESTAMP',

@@ -99,3 +99,42 @@ module.exports.pushNotificationMultiple = async function pushNotificationMultipl
         return response;
     }
 }
+
+module.exports.whatsAppEazyNotifText = async function whatsAppEazyNotifText(phone, message) {
+    try {
+        var requestData = {
+            number: phone,
+            message: message,
+            device_id: db.EAZY_DEVICE
+        }
+        const options = {
+            method: 'POST',
+            url: db.EAZY_URL + "/send-text",
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            },
+            body: requestData,
+            json: true
+        }
+
+        return new Promise((resolve, reject) => {
+            request(options, (error, response, data) => {
+                if (!error && response.statusCode == 200) {
+                    var status = true;
+                    var statusCode = 200;
+                    var remarks = "Successfully";
+                } else {
+                    var status = false;
+                    var remarks = error;
+                    var statusCode = 500;
+                }
+                var response = { status: status, statusCode: statusCode, message: remarks }
+                resolve(response);
+            });
+        });
+    } catch (e) {
+        response = { status: false, statusCode: 500, message: e.message }
+        return response;
+    }
+}

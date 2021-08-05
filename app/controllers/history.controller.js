@@ -48,8 +48,9 @@ exports.history = async (req, res) => {
                 }
             } else {
                 if (data.length > 0) {
+                    var dataResponsePayment = new Array();
+                    var dataResponseRegistrations = new Array();
                     for (j = 0; j < data.length; j++) {
-                        var dataResponsePayment = new Array();
                         dataResponsePayment[j] = {};
                         dataResponsePayment[j]['invoiceNumber'] = data[j].invoiceNumber;
                         dataResponsePayment[j]['totalPrice'] = data[j].totalPrice;
@@ -59,9 +60,7 @@ exports.history = async (req, res) => {
                         dataResponsePayment[j]['successTime'] = data[j].successTime;
                         dataResponsePayment[j]['created_at'] = data[j].created_at;
                         var reg = data[j].registrations;
-                        var dataResponseRegistrations = new Array();
                         for (i = 0; i < reg.length; i++) {
-
                             dataResponseRegistrations[i] = {};
                             dataResponseRegistrations[i]["clientId"] = reg[i].clientId;
                             dataResponseRegistrations[i]["invoiceNumber"] = reg[i].invoiceNumber;
@@ -161,6 +160,7 @@ exports.historySwabber = async (req, res) => {
             } else {
                 if (data.length > 0) {
                     var dataResponsePayment = new Array();
+                    var dataResponseRegistrations = new Array();
                     for (j = 0; j < data.length; j++) {
                         dataResponsePayment[j] = {};
                         dataResponsePayment[j]['invoiceNumber'] = data[j].invoiceNumber;
@@ -177,7 +177,6 @@ exports.historySwabber = async (req, res) => {
 
                         dataResponsePayment[j]['payment'] = data[j].payment;
                         var reg = data[j].registrations;
-                        var dataResponseRegistrations = new Array();
                         for (i = 0; i < reg.length; i++) {
                             dataResponseRegistrations[i] = {};
                             dataResponseRegistrations[i]["clientId"] = reg[i].clientId;

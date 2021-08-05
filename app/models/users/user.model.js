@@ -1,19 +1,30 @@
 module.exports = (sequelize, Sequelize) => {
     const User = sequelize.define("users", {
+        phone: {
+            type: Sequelize.INTEGER
+        },
+        otpcode: {
+            type: Sequelize.STRING,
+            allowNull: true
+        },
         username: {
-            type: Sequelize.STRING
+            type: Sequelize.STRING,
+            allowNull: true
         },
         email: {
-            type: Sequelize.STRING
+            type: Sequelize.STRING,
+            allowNull: true
         },
         password: {
-            type: Sequelize.STRING
+            type: Sequelize.STRING,
+            allowNull: true
         },
         level: {
             type: Sequelize.INTEGER
         },
         fcm_token: {
-            type: Sequelize.TEXT
+            type: Sequelize.TEXT,
+            allowNull: true
         },
         fcm_last_update: {
             type: 'TIMESTAMP',
