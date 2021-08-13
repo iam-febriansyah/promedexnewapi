@@ -26,11 +26,10 @@ exports.history = async (req, res) => {
                     required: true,
                     include: [{
                         model: ClientService,
-                        where: { isActive: true },
                         required: false,
                         include: [{
                             model: Service,
-                            required: true
+                            required: false
                         }],
                     }]
                 }
@@ -39,7 +38,6 @@ exports.history = async (req, res) => {
                 ['id', 'DESC']
             ],
         }).then(data => {
-            var arr = new Array();
             if (!data) {
                 responseTemp = {
                     status: false,
@@ -49,7 +47,6 @@ exports.history = async (req, res) => {
             } else {
                 if (data.length > 0) {
                     var dataResponsePayment = new Array();
-                    var dataResponseRegistrations = new Array();
                     for (j = 0; j < data.length; j++) {
                         dataResponsePayment[j] = {};
                         dataResponsePayment[j]['invoiceNumber'] = data[j].invoiceNumber;
@@ -59,6 +56,7 @@ exports.history = async (req, res) => {
                         dataResponsePayment[j]['expiredTime'] = data[j].expiredTime;
                         dataResponsePayment[j]['successTime'] = data[j].successTime;
                         dataResponsePayment[j]['created_at'] = data[j].created_at;
+                        var dataResponseRegistrations = new Array();
                         var reg = data[j].registrations;
                         for (i = 0; i < reg.length; i++) {
                             dataResponseRegistrations[i] = {};
@@ -160,7 +158,6 @@ exports.historySwabber = async (req, res) => {
             } else {
                 if (data.length > 0) {
                     var dataResponsePayment = new Array();
-                    var dataResponseRegistrations = new Array();
                     for (j = 0; j < data.length; j++) {
                         dataResponsePayment[j] = {};
                         dataResponsePayment[j]['invoiceNumber'] = data[j].invoiceNumber;
@@ -176,6 +173,7 @@ exports.historySwabber = async (req, res) => {
                         dataResponsePayment[j]['created_at'] = data[j].created_at;
 
                         dataResponsePayment[j]['payment'] = data[j].payment;
+                        var dataResponseRegistrations = new Array();
                         var reg = data[j].registrations;
                         for (i = 0; i < reg.length; i++) {
                             dataResponseRegistrations[i] = {};

@@ -136,6 +136,7 @@ exports.confirmation = async (req, res) => {
                             }
 
                             var resReg = await getRegistrations(invoiceNumber);
+                            var idUserRegistration;
                             if (resReg.status) {
                                 totalPrice = 0;
                                 reg = resReg.data;
@@ -161,6 +162,7 @@ exports.confirmation = async (req, res) => {
                                     transaction_details[i]["hourReservation"] = reg[i].hourReservation;
                                     transaction_details[i]["created_by"] = JSON.stringify(ipInfo);
                                     clientId = reg[i].clientId;
+                                    idUserRegistration = reg[i].iduser;
                                     totalPrice += reg[i].price;
                                 }
 
@@ -183,7 +185,8 @@ exports.confirmation = async (req, res) => {
                                                 channel: responseReservation.bank,
                                                 status: "pending",
                                                 jsonRequest: JSON.stringify(dataToSpeedpay),
-                                                created_by: JSON.stringify(ipInfo)
+                                                created_by: JSON.stringify(ipInfo),
+                                                iduser: idUserRegistration
                                             }
                                             var resPayment = await createPayment(dataToPayment);
                                             responseTemp = {
@@ -462,6 +465,7 @@ async function getRegistrations(invoiceNumber) {
             transaction_details[i]["orderType"] = reg[i].orderType;
             transaction_details[i]["dateReservation"] = reg[i].dateReservation;
             transaction_details[i]["hourReservation"] = reg[i].hourReservation;
+            transaction_details[i]["iduser"] = reg[i].iduser;
         }
         responseTemp = {
             status: true,

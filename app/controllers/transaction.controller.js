@@ -10,6 +10,7 @@ const UserLocation = db.userlocation;
 const { generalFunction, api } = require("../middleware");
 const Op = db.Sequelize.Op;
 const request = require('request');
+var dateFormat = require('dateformat');
 var getIP = require('ipware')().get_ip;
 
 exports.transaction = async (req, res) => {
@@ -261,6 +262,7 @@ exports.statusHomecare = async (req, res) => {
 
 exports.callbackSpeedpay = async (req, res) => {
     var ipInfo = getIP(req);
+    var dateNow = dateFormat(new Date(), "yyyy-mm-dd hh:MM:ss");
     var responseTemp = new Array();
     try {
         var status = req.body.status;
@@ -297,8 +299,9 @@ exports.callbackSpeedpay = async (req, res) => {
             updated_by: "Speedpay system"
         }
         const updateReservation = await Reservation.update(dataReservation, {
-            where: { invoiceNumber: invoiceNumber }
+            where: { invoiceNumber: order_id }
         });
+
         let dataPayment = {
             status: statusPayment,
             remarks: remarks,
@@ -307,21 +310,68 @@ exports.callbackSpeedpay = async (req, res) => {
             updated_at: dateNow,
             updated_by: "Speedpay system"
         }
+        const updatePayment = await Payment.update(dataPayment, {
+            where: { invoiceNumber: order_id }
+        });
+        var getDataPayment = await Reservation.findOne({
+            where: { invoiceNumber: order_id },
+            include: [{ model: User, required: true }]
+        }).then(async resDataPayment => {
+            if (resDataPayment) {
+                responseTemp = {
+                    status: true,
+                    message: "Successfully",
+                    statusCode: 200,
+                    data: resDataPayment
+                }
+            } else {
+                responseTemp = {
+                    status: false,
+                    message: "Error get data swabber",
+                    statusCode: 500
+                }
+            }
+            return resDataPayment;
+        }).catch(err => {
+            console.log(err)
+            responseTemp = {
+                status: false,
+                message: err.message,
+                statusCode: 500
+            }
+            return responseTemp;
+        });
+
         let dataReg = {
             status: statusReg
         }
-        const updatePayment = await Payment.update(dataPayment, {
-            where: { invoiceNumber: invoiceNumber }
+        const updateRegistration = await Registration.update(dataReg, {
+            where: { invoiceNumber: order_id }
         });
-        const updateRegistration = await Registraion.update(dataReg, {
-            where: { invoiceNumber: invoiceNumber }
-        });
+
+        var data = {
+            invoiceNumber: order_id
+        }
+
+        var resFCM = await postFcmPayment(order_id, remarksFcm);
+        var resFCMSwabber;
+        if (getDataPayment) {
+            var listTokenFcm = [getDataPayment.user.fcm_token];
+            var req = {
+                title: "Informasi Transaksi",
+                body: "Pembayaran dengan No Invoice: \n" + order_id + "\ntelah " + remarksFcm,
+                click_action: "FLUTTER_NOTIFICATION_CLICK",
+                data: data
+            }
+            resFCMSwabber = await api.pushNotificationMultiple(req, listTokenFcm);
+        }
         response = {
             updatePayment: updatePayment,
             updateRegistration: updateRegistration,
-            updateReservation: updateReservation
+            updateReservation: updateReservation,
+            resFCM: resFCM,
+            resFCMSwabber: resFCMSwabber
         }
-        await postFcmPayment(invoiceNumber, remarksFcm);
         res.status(200).send(response);
     } catch (e) {
         res.status(500).send({ status: false, statusCode: 500, message: e.message });
@@ -339,14 +389,17 @@ async function postFcmPayment(invoiceNumber, remarksFcm) {
             },
         ]
     });
-    data = {}
+
+    var data = {
+        invoiceNumber: invoiceNumber
+    }
     req = {
         title: "Informasi Transaksi",
-        body: "No Invoice : " + invoiceNumber + " telah " + remarksFcm,
+        body: "Pembayaran dengan No Invoice: \n" + invoiceNumber + "\ntelah " + remarksFcm,
         click_action: "FLUTTER_NOTIFICATION_CLICK",
         data: data
     }
-    if (!resRegistration) {
+    if (resRegistration) {
         if (resRegistration.length > 0) {
             result = await api.pushNotification(req, resRegistration[0]);
         }
